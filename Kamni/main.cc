@@ -14,14 +14,14 @@ int Check(const char * question)
 		inps >> result;
 		if (inps.fail()){
 			if (std::cin.fail()){
-				std::cerr << "Ïðîèçîøëà îøèáêà ââîäà-âûâîäà..." << std::endl;
+				std::cerr << "Произошла ошибка ввода-вывода..." << std::endl;
 				exit(1);
 			}
-			std::cout << "Ââîä íåêîððåêòåí. Îò Âàñ îæèäàåòñÿ ÷èñëî." << std::endl;
+			std::cout << "Ввод некорректен, от Вас ожидается число." << std::endl;
 			goto re;
 		}
 		else if (not inps.eof()){
-			std::cout << "Ïðîñòèòå, íî ýòî ÷òî çà íåïîíÿòíûé ìóñîð â êîíöå ââîäà? Èñïðàâüòå, ïîæàëóéñòà." << std::endl;
+			std::cout << "Простите, но это что за непонятный мусор в конце ввода? Исправьте, пожалуйста." << std::endl;
 			goto re;
 		}
 
@@ -36,7 +36,7 @@ int Range(const char * question, int min, int max)
 		result = Check(question);
 		if (result >= min and result <= max)
 			return result;
-		std::cout << "×èñëî äîëæíî áûòü â èíòåðâàëå îò " << min << " äî " << max << std::endl;
+		std::cout << "Число должно быть в интервале от " << min << " до " << max << std::endl;
 	}
 }
 
@@ -48,49 +48,49 @@ int main(){
 	std::minstd_rand rnd{unsigned(clk::now().time_since_epoch().count())};
 	std::uniform_int_distribution <> R {15,25};
 	std::uniform_int_distribution <> R_comp {1,3};
-	int difficulty; //ñëîæíîñòü
+	int difficulty; //сложность
 
 	do {
-		unsigned stones = R(rnd); //ãåíåðèðóåì êó÷êó
+		unsigned stones = R(rnd); //генерируем кучку
 
-		difficulty = Range("Âûáåðèòå æåëàåìûé óðîâåíü ñëîæíîñòè:\n"
-										"1.Ëåãêèé\n"
-										"2.Ñðåäíèé\n"
-										"3.Ñëîæíûé\n"
-										"4.ß óñòàë, ÿ óõîæó...\n", 1, 4);
+		difficulty = Range("Выберите желаемый уровень сложности:\n"
+										"1.Легкий\n"
+										"2.Средний\n"
+										"3.Сложный\n"
+										"4.Я устал, я ухожу...\n", 1, 4);
 		if (difficulty == 4){
 			return 0;
 		} else
-			std::cout << "Â êó÷êå " << stones << " êàìóøêîâ." << std::endl;
+			std::cout << "В кучке " << stones << " камушков." << std::endl;
 
 		while(difficulty != 4){
-			std::cout << "Çà îäèí õîä ìîæíî âçÿòü èç êó÷êè 1, 2 èëè 3 êàìóøêà." << std::endl;
+			std::cout << "За один ход можно взять из кучки 1, 2 или 3 камушка." << std::endl;
 			std::cout << std::endl;
-			std::cout << "Ñêîëüêî êàìóøêîâ âîçüì¸òå?" << std::endl;
+			std::cout << "Сколько камушков возьмёте?" << std::endl;
 			int S = Range("", 1, std::min (3U, stones));
-			stones = stones - S; /* óìåíüøàåì êó÷êó, ïðè òîì:  	1) åñëè îñòàëîñü 0 êàìóøêîâ, òî èãðîê ïðîèãðàë, èíà÷å - õîä êîìïà;
-																2) åñëè îñòàëñÿ 1 êàìóøåê, òî ïðîèãðàë êîìï */
+			stones = stones - S; /* уменьшаем кучку, при том:  	1) если осталось 0 камушков, то игрок проиграл, иначе - ход компа;
+																2) если остался 1 камушек, то проиграл комп */
 			if (stones < 26){
-				std::cout << "Â êó÷êå " << stones << " êàìóøêîâ." << std::endl;}
+				std::cout << "В кучке " << stones << " камушков." << std::endl;}
 
 			if (stones == 0 || stones > 25){
-				std::cout << "Ê ñîæàëåíèþ, Âû ïðîèãðàëè... Õîòèòå âçÿòü ðåâàíø?\n" << std::endl;
+				std::cout << "К сожалению, Вы проиграли... Хотите взять реванш?\n" << std::endl;
 				break;
 			} else {
 				unsigned comp;
-				//ïðîïèøåì ñòåïåíü õèòðîñòè è áåñïîùàäíîñòè êîìïà
+				//пропишем степень хитрости и беспощадности компа
 
 				if (stones < 5 && difficulty != 1){
-					switch(stones){//"Òû íå ïðîéä¸øü!"
+					switch(stones){//"Ты не пройдёшь!"
 					case 4: comp = 3; break;
 					case 3: comp = 2; break;
 					case 2: comp = 1; break;
 					}
 				} else {
 					if(difficulty == 1){
-						comp = R_comp(rnd); //â çàâèñèìîñòè îò âåëèêîãî ðàíäîìà ó èãðîêà ìîæåò áûòü øàíñ íà ïîáåäó
+						comp = R_comp(rnd); //в зависимости от великого рандома у игрока может быть шанс на победу
 					} else if (difficulty == 2){
-						switch(S){//ó èãðîêà åñòü íåáîëüøîé øàíñ íà ïîáåäó
+						switch(S){//у игрока есть небольшой шанс на победу
 						case 1: comp = 3; break;
 						case 2: comp = 2; break;
 						case 3: comp = 1; break;
@@ -109,20 +109,16 @@ int main(){
 					}
 				}
 				stones = stones - comp;
-				std::cout << "Âàø ñîïåðíèê âçÿë " << comp << std::endl;
+				std::cout << "Ваш соперник взял " << comp << std::endl;
 				if (stones == 0 || stones > 25){
-					std::cout << "Óðàààà, Âû îäåðæàëè ïîáåäó íàä èñêóññòâåííûì èíòåëëåêòîì! Õîòèòå ñûãðàòü åù¸?\n" << std::endl;
+					std::cout << "Ураааа, Вы одержали победу над искусственным интеллектом! Хотите сыграть ещё?\n" << std::endl;
 					break;
 				}
-				std::cout << "Â êó÷êå " << stones << " êàìóøêîâ." << std::endl;
+				std::cout << "В кучке " << stones << " камушков." << std::endl;
 			}
 		}
 
 	} while(true);
 
 	return 0;
-} 
-
-
-
-
+}
