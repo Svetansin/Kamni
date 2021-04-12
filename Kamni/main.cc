@@ -1,7 +1,3 @@
-git config --global i18n.commitencodig windows-1252
-git config --global i18n.logoutputencoding windows-1252
-set LESSCHARSET=latin1
-
 #include <random>
 #include <iostream>
 #include <chrono>
